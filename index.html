@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis · Central de Comando</title>
+<style>
+:root{--bg:#050b14;--p:#08182a;--l:#14486b;--t:#d6ecff;--d:#6f93b0;--c:#2fd0ff;--a:#ffb454;--v:#b49cff;--g:#3ee0a0}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 30%,#0a2640,var(--bg) 70%);color:var(--t);font:14px/1.4 "Segoe UI","Noto Sans",system-ui,sans-serif;display:grid;grid-template-columns:200px 1fr;overflow:hidden}
+aside{background:#06111e;border-right:1px solid var(--l);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:8px;padding:4px 8px 14px;font-weight:700;letter-spacing:.15em;font-size:17px}
+.logo i{width:26px;height:26px;border-radius:50%;border:2px solid var(--c);box-shadow:0 0 10px var(--c);display:block}
+.logo small{display:block;font-size:9px;color:var(--d);letter-spacing:.2em;font-weight:400}
+aside a{padding:8px 10px;border-radius:8px;color:var(--d)}
+aside a.on{background:#0e3350;color:var(--t);box-shadow:inset 0 0 0 1px var(--l)}
+.vbox{margin-top:auto;border:1px solid var(--l);border-radius:10px;padding:10px;text-align:center;color:var(--d);font-size:12px}
+.vbox b{display:block;color:var(--c);font-size:13px;margin-bottom:4px}
+.wrap{display:grid;grid-template-rows:auto 1fr auto;min-width:0;min-height:0;padding:10px;gap:10px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.st{border:1px solid var(--l);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--d)}
+.st b{color:var(--g)}
+.st b.off{color:var(--a)}
+.clock{text-align:center}
+.clock b{font-size:24px;letter-spacing:.06em;display:block;line-height:1.1}
+.clock span{font-size:12px;color:var(--d)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:1.7fr 1fr 1fr;gap:10px;min-height:0}
+.box{background:linear-gradient(180deg,#0a1f35cc,#06121fcc);border:1px solid var(--l);border-radius:10px;padding:10px 12px;min-height:0;overflow:hidden;position:relative}
+.box h3{font-size:11px;letter-spacing:.14em;color:var(--c);font-weight:600;margin-bottom:8px;text-transform:uppercase}
+.sub{font-size:10px;color:var(--d);letter-spacing:0;font-weight:400;float:right;text-transform:none}
+.ov{grid-column:span 3}.core{grid-column:span 6;display:flex;align-items:center;justify-content:center;padding:0}.feed{grid-column:span 3}
+.ag{grid-column:span 5}.tl{grid-column:span 4}.qc{grid-column:span 3}
+.sm{grid-column:span 4}.mm{grid-column:span 3}.llm{grid-column:span 5}
+.row{display:flex;justify-content:space-between;padding:3px 0;font-size:13px;border-bottom:1px solid #0e2a42}
+.row span:last-child{color:var(--d)}.ok{color:var(--g)!important}.warn{color:var(--a)!important}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.ctitle{position:relative;z-index:1;text-align:center;pointer-events:none}
+.ctitle b{display:block;font-size:34px;letter-spacing:.35em;text-shadow:0 0 18px var(--c)}
+.ctitle span{color:var(--c);letter-spacing:.3em;font-size:12px}
+#fala{position:absolute;bottom:8px;left:12px;right:12px;text-align:center;font-size:12px;color:var(--d);z-index:1;min-height:18px}
+.fi{padding:5px 0;border-bottom:1px solid #0e2a42;font-size:12px}.fi i{font-style:normal;font-size:10px;color:var(--c);border:1px solid var(--l);border-radius:4px;padding:0 5px;margin-right:6px}
+.ags{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ags div{border:1px solid var(--l);border-radius:8px;padding:7px;font-size:12px}.ags small{display:block;color:var(--d)}
+.tli{display:flex;gap:8px;padding:4px 0;font-size:12px}.tli time{color:var(--d);width:44px}
+.qc button{display:block;width:100%;text-align:left;background:#0c2a44;color:var(--t);border:1px solid var(--l);border-radius:8px;padding:7px 10px;margin-bottom:6px;font:inherit;font-size:13px;cursor:pointer}
+.qc button:hover,.qc button:focus-visible{border-color:var(--c);outline:none;box-shadow:0 0 8px #2fd0ff55}
+.rings{display:flex;justify-content:space-around;margin-top:6px}
+.ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:conic-gradient(var(--c) calc(var(--v)*1%),#0e2a42 0)}
+.ring em{font-style:normal;width:50px;height:50px;border-radius:50%;background:#06121f;display:grid;place-items:center}
+.llms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.llms div{border:1px solid var(--l);border-radius:8px;padding:6px 8px;font-size:12px}.llms small{display:block;color:var(--d)}
+footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--l);border-radius:12px;padding:8px 14px;background:#06111e;color:var(--d);font-size:12px}
+#mic{background:radial-gradient(#0f3a5a,#07203a);color:var(--t);border:1.5px solid var(--c);border-radius:999px;padding:11px 46px;font:inherit;font-weight:700;letter-spacing:.14em;cursor:pointer;box-shadow:0 0 18px #2fd0ff66}
+#mic:hover,#mic:focus-visible{outline:none;box-shadow:0 0 28px var(--c)}
+#mic.on{border-color:var(--a);box-shadow:0 0 22px var(--a)}
+.note{position:absolute;right:10px;top:10px;font-size:10px;color:var(--d)}
+@media(max-width:980px){body{grid-template-columns:1fr;overflow:auto}aside{display:none}.grid{grid-template-rows:none;display:flex;flex-direction:column}.core{height:340px}}
+</style>
+</head>
+<body>
+<aside>
+  <div class="logo"><i></i><div>JARVIS<small>CENTRAL DE COMANDO</small></div></div>
+  <a class="on">Central de Comando</a><a>Núcleo de IA</a><a>Agentes</a><a>Tarefas</a><a>Agenda</a><a>Memória</a><a>Conversas</a><a>Ferramentas</a>
+  <div class="vbox"><b>Voz</b><span id="vs">Parado</span></div>
+</aside>
+<div class="wrap">
+  <header>
+    <div class="st">STATUS · <b>ONLINE</b></div>
+    <div class="clock"><b id="hora">--:--:--</b><span id="data"></span></div>
+    <div class="st">Operador · João Pedro</div>
+  </header>
+  <div class="grid">
+    <div class="box ov"><h3>Visão do núcleo</h3>
+      <div class="row"><span>Núcleo de IA</span><span class="warn">Cérebro simples</span></div>
+      <div class="row"><span>Backend Java</span><span id="bk" class="warn">Verificando...</span></div>
+      <div class="row"><span>Voz</span><span class="ok">Chrome</span></div>
+      <div class="row"><span>Memória</span><span>Não ligada</span></div>
+      <div class="row"><span>Agentes</span><span>0 ativos</span></div>
+      <div class="row"><span>Modelos de IA</span><span>0 ligados</span></div>
+    </div>
+    <div class="box core"><canvas id="orb"></canvas>
+      <div class="ctitle"><b>JARVIS</b><span id="est">PARADO</span></div>
+      <div id="fala"></div></div>
+    <div class="box feed"><h3>Feed ao vivo <span class="sub">exemplo</span></h3>
+      <div class="fi"><i>INFO</i>Ciclo de voz funcionando</div>
+      <div class="fi"><i>TIP</i>Falta ligar uma IA no pensar()</div>
+      <div class="fi"><i>TODO</i>Integração com Spotify</div>
+      <div class="fi"><i>TODO</i>Integração com Gmail</div>
+      <div class="fi"><i>TODO</i>Mover a voz para o Java</div>
+    </div>
+    <div class="box ag"><h3>Agentes <span class="sub">planejado, ainda não existem</span></h3>
+      <div class="ags"><div>Código<small>em espera</small></div><div>Pesquisa<small>em espera</small></div><div>Memória<small>em espera</small></div><div>Navegador<small>em espera</small></div><div>Tarefas<small>em espera</small></div><div>Sistema<small>em espera</small></div></div>
+    </div>
+    <div class="box tl"><h3>Cronograma <span class="sub">exemplo</span></h3>
+      <div class="tli"><time>09:00</time>Estudar Java</div><div class="tli"><time>14:00</time>Trabalho em grupo</div><div class="tli"><time>20:00</time>Projeto Jarvis</div>
+    </div>
+    <div class="box qc"><h3>Comandos rápidos</h3>
+      <button data-c="Bom dia Jarvis">Dizer bom dia</button><button data-c="Quantas horas?">Ver as horas</button><button data-c="Bom dia Jarvis, quantas horas?">Bom dia + horas</button>
+    </div>
+    <div class="box sm"><h3>Monitor do sistema <span class="sub">exemplo</span></h3>
+      <div class="rings"><div class="ring" style="--v:15"><em>CPU</em></div><div class="ring" style="--v:54"><em>RAM</em></div><div class="ring" style="--v:40"><em>Disco</em></div></div>
+    </div>
+    <div class="box mm"><h3>Memória</h3>
+      <div class="row"><span>Itens</span><span>0</span></div><div class="row"><span>Sessões</span><span>1</span></div>
+      <div class="note"></div>
+    </div>
+    <div class="box llm"><h3>Modelos de IA</h3>
+      <div class="llms"><div>Claude<small>não ligado</small></div><div>OpenAI<small>não ligado</small></div><div>Gemini<small>não ligado</small></div><div>Local<small>não ligado</small></div><div>Spotify<small>não ligado</small></div><div>Gmail<small>não ligado</small></div></div>
+    </div>
+  </div>
+  <footer>
+    <span id="rede">Rede: verificando</span>
+    <button id="mic" type="button">FALAR COM O JARVIS</button>
+    <span>Dados com "exemplo" são só visuais</span>
+  </footer>
+</div>
+<script>
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+function relogio(){const d=new Date();$('hora').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());$('data').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('rede').textContent='Rede: '+(navigator.onLine?'conectada':'sem internet');}
+relogio();setInterval(relogio,1000);
+
+// ---- Esfera ----
+const cv=$('orb'),cx=cv.getContext('2d');let estado='parado',ang=0,t=0;
+const N=520,pts=[];for(let i=0;i<N;i++){const y=1-2*(i+.5)/N,r=Math.sqrt(1-y*y),a=i*Math.PI*(3-Math.sqrt(5));pts.push([Math.cos(a)*r,y,Math.sin(a)*r]);}
+function frame(){
+  const W=cv.width=cv.clientWidth*devicePixelRatio,H=cv.height=cv.clientHeight*devicePixelRatio,C=W/2,M=H/2;
+  t+=.016;ang+=({parado:.004,ouvindo:.012,processando:.05,falando:.02})[estado];
+  const p=({parado:Math.sin(t*1.2)*.02,ouvindo:Math.sin(t*3)*.05,processando:Math.sin(t*6)*.025-.04,falando:Math.sin(t*9)*.07+Math.sin(t*5)*.04})[estado];
+  const R=Math.min(W,H)*.3*(1+p),cor=({falando:'255,180,84',processando:'180,156,255'})[estado]||'47,208,255',ca=Math.cos(ang),sa=Math.sin(ang);
+  cx.clearRect(0,0,W,H);
+  for(const [x,y,z] of pts){const X=x*ca+z*sa,Z=-x*sa+z*ca,f=(Z+1)/2;cx.beginPath();cx.arc(C+X*R*(1+.06*Z),M+y*R*(1+.06*Z),(1+f*2.2)*devicePixelRatio,0,6.283);cx.fillStyle=`rgba(${cor},${.12+f*.88})`;cx.fill();}
+  for(let i=0;i<40;i++){const a=i/40*6.283+t*(estado==='parado'?.15:.5),rr=R*1.4+Math.sin(t*2+i)*(estado==='parado'?2:9);cx.beginPath();cx.arc(C+Math.cos(a)*rr,M+Math.sin(a)*rr*.45,2*devicePixelRatio,0,6.283);cx.fillStyle=`rgba(${cor},.5)`;cx.fill();}
+  requestAnimationFrame(frame);
+}
+frame();
+const nomes={parado:'Parado',ouvindo:'Ouvindo...',processando:'Processando...',falando:'Falando...'};
+function setEstado(e){estado=e;$('est').textContent=nomes[e].toUpperCase();$('vs').textContent=nomes[e];$('mic').classList.toggle('on',e==='ouvindo');}
+
+// ---- Cérebro, fala e ciclo (mesmos da V1) ----
+const BACKEND=location.protocol.startsWith('http')?'/api/chat':'http://localhost:8080/api/chat';
+function cerebroLocal(t){const q=t.toLowerCase();let r='';
+  if(q.includes('bom dia'))r+='Bom dia, João Pedro. ';
+  if(q.includes('hora'))r+='Agora são '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'. ';
+  return r.trim()||'Ouvi: '+t+'. Ainda não tenho cérebro de verdade para isso.';}
+async function pensar(texto){
+  try{const r=await fetch(BACKEND,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto}),signal:AbortSignal.timeout(2500)});
+    if(r.ok){const j=await r.json();if(j.resposta)return j.resposta;}}catch(e){}
+  await new Promise(r=>setTimeout(r,700));return cerebroLocal(texto);}
+function falar(texto){
+  if(!('speechSynthesis' in window)){setEstado('parado');return;}
+  const u=new SpeechSynthesisUtterance(texto);u.lang='pt-BR';u.onstart=()=>setEstado('falando');u.onend=u.onerror=()=>setEstado('parado');
+  speechSynthesis.cancel();speechSynthesis.speak(u);}
+async function ciclo(texto,voz){
+  texto=texto.trim();if(!texto||(estado!=='parado'&&estado!=='ouvindo'))return;
+  $('fala').textContent='Você: '+texto;setEstado('processando');
+  const resp=await pensar(texto);$('fala').textContent='Jarvis: '+resp;
+  voz===false?setEstado('parado'):falar(resp);}
+document.querySelectorAll('.qc button').forEach(b=>b.onclick=()=>ciclo(b.dataset.c,true));
+
+// ---- Microfone ----
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
+$('mic').onclick=()=>{
+  if(!SR){$('fala').textContent='Sem reconhecimento de voz neste navegador. Use o Google Chrome.';return;}
+  if(estado==='ouvindo'&&rec){rec.stop();return;}
+  if(estado!=='parado')return;
+  rec=new SR();rec.lang='pt-BR';let ouviu=false;
+  rec.onstart=()=>{setEstado('ouvindo');$('fala').textContent='';};
+  rec.onresult=e=>{ouviu=true;setEstado('parado');ciclo(e.results[0][0].transcript,true);};
+  rec.onerror=e=>{setEstado('parado');$('fala').textContent='Erro no microfone: '+e.error+'. Verifique a permissão e a internet.';};
+  rec.onend=()=>{if(estado==='ouvindo'&&!ouviu){setEstado('parado');$('fala').textContent='Não ouvi nada. Tente de novo.';}};
+  rec.start();};
+
+// ---- Ping no backend Java ----
+(async()=>{const b=$('bk');try{const r=await fetch(BACKEND,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"texto":""}',signal:AbortSignal.timeout(2000)});
+  if(r.ok){b.textContent='Conectado';b.className='ok';return;}}catch(e){}
+  b.textContent='Offline (cérebro local)';b.className='warn';})();
+</script>
+</body>
+</html>
